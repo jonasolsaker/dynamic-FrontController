@@ -1,0 +1,43 @@
+# POST http://127.0.0.1:8000/user/login/
+# Content-Type: application/json
+
+# {"username": "jonas", "password": "admin123"}
+
+# ###
+
+# POST http://127.0.0.1:8000/user/logout/
+# Content-Type: application/json
+
+# {"username": "jonas", "password": "admin123"}
+
+# ###
+
+# POST http://127.0.0.1:8000/user/signup/
+# Content-Type: application/json
+
+# {"username": "jonas", "password": "admin123"}
+
+# ###
+
+# GET http://127.0.0.1:8000/user/test_token/
+# Content-Type: application/json
+
+# {"username": "jonas", "password": "admin123"}
+
+POST http://127.0.0.1:8000/user/signup/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "password": "admin123", "email": "a@a.no"}
+
+###
+
+POST http://127.0.0.1:8000/user/login/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "password": "admin123", "email": "a@a.no"}
+
+### 
+
+GET http://127.0.0.1:8000/user/test_token/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvbmFzb2xzYWtlciJ9.b7P-TLDBDJ82ZRijXLsNHiNuKoTfGytk2UjWyHdsjb0
+Content-Type: application/json
