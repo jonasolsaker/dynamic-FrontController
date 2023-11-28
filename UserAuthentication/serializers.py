@@ -1,21 +1,4 @@
-# from rest_framework import serializers
-# from django.contrib.auth.models import User
-
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta(object):
-#         model = User
-#         fields = ['id', 'username', 'password', 'email']
-
-
-# # class UserInputSerializer(serializers.HyperlinkedModelSerializer):
-# #     class Meta:
-# #         fields = '__all__'
-
-# # class UserSerializer2(serializers.HyperlinkedModelSerializer):
-# #     inputs = 
-
 from rest_framework import serializers
-# from .models import user_trial_collection
 from django.contrib.auth.hashers import make_password, check_password
 from db_connection import db
 
@@ -23,6 +6,7 @@ class UserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, max_length=128)
+    subscribed_locations = serializers.ListField(child=serializers.CharField(max_length=100))
 
     def validate_username(self, value):
         if db.user_trial.count_documents({'username': value}) > 0:

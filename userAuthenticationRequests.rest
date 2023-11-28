@@ -1,0 +1,91 @@
+POST http://127.0.0.1:8000/user/signup/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "password": "admin123", "email": "a@a.no", "subscribed_locations": []}
+
+###
+
+POST http://127.0.0.1:8000/user/login/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "password": "admin123", "email": "a@a.no"}
+
+### 
+
+GET http://127.0.0.1:8000/user/test_token/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvbmFzb2xzYWtlciJ9.b7P-TLDBDJ82ZRijXLsNHiNuKoTfGytk2UjWyHdsjb0
+Content-Type: application/json
+
+
+###
+
+POST http://127.0.0.1:8000/user/add-location/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "10.7579,59.9114"}
+
+###
+
+POST http://127.0.0.1:8000/user/add-location/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "5.3244,60.3971"}
+
+###
+
+POST http://127.0.0.1:8000/user/remove-location/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "10.7579,59.9114"}
+
+###
+
+POST http://127.0.0.1:8000/user/remove-location/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "5.3244,60.3971"}
+
+
+### longitude is smaller and latitude is the bigger number
+###
+
+POST http://127.0.0.1:8000/user/add-count/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "10.7579,59.9114"} 
+
+
+
+
+
+### should return error since user is not subscribed
+
+POST http://127.0.0.1:8000/user/add-count/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "59.9114,10.7579"}
+
+
+### 
+
+POST http://127.0.0.1:8000/user/add-count/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "5.3244,60.3971"}
+
+
+### 
+
+POST http://127.0.0.1:8000/user/remove-count/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "10.7579,59.9114"}
+
+### 
+
+POST http://127.0.0.1:8000/user/remove-count/
+Content-Type: application/json
+
+{"username": "jonasolsaker", "location": "5.3244,60.3971"}
+
+
