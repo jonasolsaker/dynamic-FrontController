@@ -13,3 +13,6 @@ client = pymongo.MongoClient(url)
 
 db = client['User_db']
 ```
+
+## VSCode endpoint testing
+```.rest``` files have testing for endpoints defined. To run on VSCode ```REST Client``` extention is needed.
