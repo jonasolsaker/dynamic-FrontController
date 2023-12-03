@@ -7,8 +7,6 @@ class Tutorial(models.Model):
     description = models.CharField(max_length=200,blank=False, default='')
     published = models.BooleanField(default=False)
 
-from db_connection import db
+from db_connection import atlas_db
 
-# Create your models here.
-
-user_trial_collection = db['user_trial']
+user_trial_collection = atlas_db['user_trial']

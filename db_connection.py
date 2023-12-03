@@ -1,6 +1,5 @@
 import pymongo
 
-url = 'mongodb://localhost:27017/'
-client = pymongo.MongoClient(url)
-
-db = client['User_db']
+atlas_url = 'mongodb+srv://598284:NayC8yGabCb6petB@subscription-db.nuxok2i.mongodb.net/'
+atlas_client = pymongo.MongoClient(atlas_url)
+atlas_db = atlas_client['FrontController']

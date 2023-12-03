@@ -10,13 +10,18 @@ from Subscription.helpers import geocode_location
 import jwt
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
-from db_connection import db
+from db_connection import atlas_db
+
+@api_view(['GET'])
+def index(request):
+    return Response('This is a test')
 
 @api_view(['POST'])
 def login(request):
+    print("TEST")
     username = request.data.get('username')
     password = request.data.get('password')
-    user = db.user_trial.find_one({'username': username})
+    user = atlas_db.user_trial.find_one({'username': username})
     if user and check_password(password, user['password']):
         token = jwt.encode({'username': user['username']}, settings.SECRET_KEY, algorithm='HS256')
         return Response({'token': token})
@@ -58,14 +63,14 @@ def test_token(request):
 def add_location(request):
     username = request.data.get('username')
     location = request.data.get('location')
-    user = db.user_trial.find_one({'username': username})
+    user = atlas_db.user_trial.find_one({'username': username})
     if not username or not location:
         return Response({'error': 'Username and location are required'}, status=400)
     # Check if the location already exists in the user's locations
     if location in user.get('subscribed_locations', []):
         return Response({'error': 'Location already exists for this user'}, status=400)
      # Update the user's document by adding the location to the locations list
-    result = db.user_trial.update_one(
+    result = atlas_db.user_trial.update_one(
         {'username': username},
         {'$addToSet': {'subscribed_locations': location}}  # $addToSet adds the item if it doesn't already exist
     )
@@ -78,10 +83,10 @@ def add_location(request):
 def add_count_to_location(request):
     username = request.data.get('username')
     location = request.data.get('location')
-    user = db.user_trial.find_one({'username': username})
+    user = atlas_db.user_trial.find_one({'username': username})
 
     if location in user.get('subscribed_locations', []):
-        subscription_cluster = db.subscription_trial.find_one({'location': location})
+        subscription_cluster = atlas_db.subscription_trial.find_one({'location': location})
         if subscription_cluster is None:
             longitude, latitude = geocode_location(location)
             new_location = {
@@ -90,7 +95,7 @@ def add_count_to_location(request):
                 'latitude': latitude,
                 'longitude': longitude
             }
-            result = db.subscription_trial.insert_one(new_location)
+            result = atlas_db.subscription_trial.insert_one(new_location)
 
             # Check if the document was successfully inserted
             if result.inserted_id:
@@ -100,7 +105,7 @@ def add_count_to_location(request):
 
         else:
             document_id = subscription_cluster['_id']
-            result = db.subscription_trial.update_one(
+            result = atlas_db.subscription_trial.update_one(
                 {'_id': document_id},
                 {'$inc': {'subscribers': 1}}
             )
@@ -115,14 +120,14 @@ def add_count_to_location(request):
 def remove_location(request):
     username = request.data.get('username')
     location = request.data.get('location')
-    user = db.user_trial.find_one({'username': username})
+    user = atlas_db.user_trial.find_one({'username': username})
     if not username or not location:
         return Response({'error': 'Username and location are required'}, status=400)
     if location not in user.get('subscribed_locations', []):
         return Response({'error': 'Location does not already exists for this user'}, status=400)
     
     # Remove the location from the user's 'locations' array
-    result = db.user_trial.update_one(
+    result = atlas_db.user_trial.update_one(
         {'username': username},
         {'$pull': {'subscribed_locations': location}}
     )
@@ -137,19 +142,19 @@ def remove_count_from_location(request):
     location = request.data.get('location')
     # user = db.user_trial.find_one({'username': username})
     # if location in user.get('subscribed_locations', []):
-    subscription_cluster = db.subscription_trial.find_one({'location': location})
+    subscription_cluster = atlas_db.subscription_trial.find_one({'location': location})
     if subscription_cluster == None:
         return Response({'error': 'Location not in subscription database'})
     count = subscription_cluster['subscribers']
     if count == 1:
-        result = db.subscription_trial.delete_one({'location': location})
+        result = atlas_db.subscription_trial.delete_one({'location': location})
         if result.deleted_count:
             return Response({'status': 'Subscription deleted successfully'})
         else:
             return Response({'error': 'Subscription not found'}, status=404)
     elif count > 1:
         document_id = subscription_cluster['_id']
-        result = db.subscription_trial.update_one(
+        result = atlas_db.subscription_trial.update_one(
             {'_id': document_id},
             {'$inc': {'subscribers': -1}}
         )

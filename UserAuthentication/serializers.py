@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password, check_password
-from db_connection import db
+from db_connection import atlas_db
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, max_length=128)
-    subscribed_locations = serializers.ListField(child=serializers.CharField(max_length=100))
+    subscribed_locations = serializers.ListField(child=serializers.CharField(max_length=100), default = [])
 
     def validate_username(self, value):
-        if db.user_trial.count_documents({'username': value}) > 0:
+        if atlas_db.user_trial.count_documents({'username': value}) > 0:
             raise serializers.ValidationError("A user with that username already exists.")
         return value
     
@@ -17,7 +17,7 @@ class UserSerializer(serializers.Serializer):
         # Handle user creation with Pymongo
         # validated_data['password'] = make_password(validated_data['password'])
         validated_data['password'] = make_password(validated_data['password'])
-        db.user_trial.insert_one(validated_data)
+        atlas_db.user_trial.insert_one(validated_data)
         return validated_data
 
     def update(self, instance, validated_data):
@@ -27,7 +27,7 @@ class UserSerializer(serializers.Serializer):
             if not check_password(validated_data['password'], instance.get('password')):
                 validated_data['password'] = make_password(validated_data['password'])
 
-        db.user_trial.update_one({'username': instance['username']}, {'$set': validated_data})
+        atlas_db.user_trial.update_one({'username': instance['username']}, {'$set': validated_data})
         return validated_data
 
 

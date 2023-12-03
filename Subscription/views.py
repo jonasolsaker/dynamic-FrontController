@@ -5,18 +5,18 @@ from bson import ObjectId
 from bson.errors import InvalidId
 
 from .serializers import LocationSerializer
-from db_connection import db
+from db_connection import atlas_db
 
 @api_view(['GET'])
 def get_locations(request):
-    locations = list(db.subscription_trial.find())
+    locations = list(atlas_db.subscription_trial.find())
     serializer = LocationSerializer(locations, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
 def add_location(request):
     location_data = request.data.get('location')
-    existing_location = db.subscription_trial.find_one({'location': location_data})
+    existing_location = atlas_db.subscription_trial.find_one({'location': location_data})
 
     if existing_location:
         return Response({'error': 'Location already exists'}, status=409)
@@ -50,10 +50,10 @@ def add_location(request):
 @api_view(['DELETE'])
 def delete_location(request):
     location_data = request.data.get('location')
-    existing_location = db.subscription_trial.find_one({'location': location_data})
+    existing_location = atlas_db.subscription_trial.find_one({'location': location_data})
 
     if existing_location:
-        delete_result = db.subscription_trial.delete_one({'_id': existing_location['_id']})
+        delete_result = atlas_db.subscription_trial.delete_one({'_id': existing_location['_id']})
         if delete_result.deleted_count > 0:
             return Response({'status': 'Deleted location from subscription database'}, status=204)
         else:

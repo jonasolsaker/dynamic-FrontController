@@ -11,5 +11,5 @@ urlpatterns = [
     re_path('add-location/', views.add_location),
     re_path('remove-location/', views.remove_location),
     re_path('add-count/', views.add_count_to_location),
-    re_path('remove-count/', views.remove_count_from_location),
+    re_path('remove-count/', views.remove_count_from_location)
 ]
