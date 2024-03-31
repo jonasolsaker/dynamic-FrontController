@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamic-frontcontroller-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dynamic-frontcontroller
+  template:
+    metadata:
+      labels:
+        app: dynamic-frontcontroller
+    spec:
+      containers:
+      - name: dynamic-frontcontroller
+        image: dynamicproject/dynamic-frontcontroller:latest
+        ports:
+        - containerPort: 3000
